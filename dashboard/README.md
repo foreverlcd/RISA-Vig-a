@@ -49,6 +49,10 @@ cuidado, no un ingeniero) — lenguaje plano por defecto, jerga técnica
   (ver `src/app/api/narrate/route.ts`, función `isGrounded`). Sin
   `OPENROUTER_API_KEY` configurada, el botón falla con un mensaje claro y
   el resto del dashboard sigue funcionando igual — no es una dependencia dura.
+- **Centro de operaciones**: concentra una ronda guiada, el asistente de
+  enfermería virtual y el contrato del webhook. La ronda y el asistente ayudan
+  a organizar y explicar la cola; nunca diagnostican ni ejecutan acciones sobre
+  pacientes sin validación humana.
 
 ### Activar "Redactar con IA"
 
@@ -60,6 +64,22 @@ npm run dev
 
 En Vercel: **Project Settings → Environment Variables** → agrega
 `OPENROUTER_API_KEY` (y opcionalmente `OPENROUTER_MODEL`), luego redeploy.
+
+### Conectar un webhook
+
+El dashboard expone `POST /api/webhook`. Para activarlo, agrega
+`RISA_WEBHOOK_SECRET` en `.env.local` o en las variables de entorno de Vercel.
+Cada llamada debe incluir el encabezado `x-risa-webhook-secret` y, como mínimo,
+un cuerpo JSON como:
+
+```json
+{ "event_type": "signal.received", "event_id": "evt_123" }
+```
+
+El endpoint autentica y valida la recepción (`202 Accepted`). Este MVP **no
+persiste ni inyecta** el evento en la cola mostrada: para eso se requiere una
+base de datos o cola de mensajes y un proceso que regenere/actualice los datos.
+Así se evita dar la falsa impresión de que un evento clínico ya fue procesado.
 
 Verificado en navegador real (Playwright headless, luz y modo oscuro):
 carga de datos, filtros, búsqueda, las 4 pestañas, el toggle técnico y el

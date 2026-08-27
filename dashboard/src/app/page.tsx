@@ -8,6 +8,7 @@ import SignalDetail from "./SignalDetail";
 import NoSignalDetail from "./NoSignalDetail";
 import TrendView from "./TrendView";
 import LiveDemo from "./LiveDemo";
+import OperationsCenter from "./OperationsCenter";
 
 const PAGE_SIZE = 20;
 
@@ -21,7 +22,7 @@ function topFactorSummary(s: Signal): string {
 }
 
 type ViewMode = "signals" | "no_signal";
-type Page = "queue" | "trend";
+type Page = "queue" | "trend" | "operations";
 
 export default function Home() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -120,6 +121,13 @@ export default function Home() {
           >
             Tendencia general
           </button>
+          <button
+            onClick={() => setPage2("operations")}
+            className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-left transition"
+            style={page === "operations" ? { background: "var(--brand)", color: "white" } : { color: "var(--ink)" }}
+          >
+            Centro de operaciones
+          </button>
         </nav>
         <div className="mt-auto text-xs text-[var(--muted)] space-y-1 pt-6 border-t border-[var(--line)]">
           <p>{data.stats.total_patients_monitored} pacientes monitoreados</p>
@@ -131,6 +139,10 @@ export default function Home() {
         {page === "trend" ? (
           <div className="px-6 md:px-8 py-6">
             <TrendView data={data} />
+          </div>
+        ) : page === "operations" ? (
+          <div className="px-6 md:px-8 py-6">
+            <OperationsCenter data={data} />
           </div>
         ) : (
           <>

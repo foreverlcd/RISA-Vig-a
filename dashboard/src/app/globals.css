@@ -149,3 +149,16 @@ h1, h2, .font-display {
   0% { background-position: 100% center; }
   100% { background-position: -100% center; }
 }
+
+.automation-pulse {
+  animation: automation-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes automation-pulse {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 12%, transparent); }
+  to { box-shadow: 0 0 0 7px color-mix(in srgb, var(--brand) 0%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .automation-pulse { animation: none; }
+}

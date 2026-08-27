@@ -50,9 +50,10 @@ export default function AiExplanation({ signal }: { signal: Signal }) {
     return (
       <button
         onClick={generate}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--brand)] hover:text-[var(--brand-ink)] underline underline-offset-2"
+        className="w-full inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition hover:brightness-95"
+        style={{ borderColor: "var(--brand)", color: "var(--brand)", background: "var(--brand-soft)" }}
       >
-        ✨ Redactar con IA (OpenRouter)
+        ✨ Redactar explicación con IA
       </button>
     );
   }

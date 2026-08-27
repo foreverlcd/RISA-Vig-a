@@ -83,9 +83,11 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
                     "No hay suficientes variables con evidencia relevante para describir un patrón."
                   )}
                 </p>
-                <div className="mt-2">
-                  <AiExplanation signal={signal} />
-                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)] mb-1">Versión redactada</p>
+                <AiExplanation signal={signal} />
               </div>
 
               <div className="grid grid-cols-2 gap-3">

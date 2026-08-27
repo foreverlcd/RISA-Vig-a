@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 from . import config
+from .safety_guardrails import risk_floor_from_safety_score
 
 ROLE_WEIGHT = {
     "PERSONAL_BASELINE_RELEVANT": 0.85,
@@ -57,10 +58,29 @@ def fuse_windows(features: pd.DataFrame) -> pd.DataFrame:
         terms.append(CONCORDANCE_WEIGHT * concordance)
         risk = 1.0 - np.prod([1.0 - t for t in terms])
 
+        # Cada familia fisiológica aporta una sola vez aunque HR y un wearable
+        # estén presentes; se toma el peor valor de esa ventana. Esto evita que
+        # dos sensores del mismo pulso inflen artificialmente el puntaje.
+        safety_rows = g[g["universal_safety_family"].notna()]
+        if safety_rows.empty:
+            safety_score, safety_max_component, safety_flags = 0, 0, ""
+        else:
+            safety_by_family = safety_rows.groupby("universal_safety_family")["universal_safety_points"].max()
+            safety_score = int(safety_by_family.sum())
+            safety_max_component = int(safety_by_family.max())
+            safety_flags = ",".join(safety_by_family[safety_by_family > 0].index.tolist())
+        safety_risk_floor = risk_floor_from_safety_score(safety_score)
+        combined_risk = max(float(risk), safety_risk_floor)
+
         top = g.sort_values("term", ascending=False).iloc[0]
 
         return pd.Series({
-            "risk_score": risk,
+            "risk_score": combined_risk,
+            "personal_risk_score": risk,
+            "universal_safety_score": safety_score,
+            "universal_safety_max_component": safety_max_component,
+            "universal_safety_flags": safety_flags,
+            "universal_safety_risk_floor": safety_risk_floor,
             "n_available_vars": n_available,
             "n_active_vars": n_active,
             "concordance": concordance,

@@ -203,6 +203,16 @@ export default function Home() {
                   No es un diagnóstico ni un modelo de IA entrenado: es un cálculo estadístico explicable que apoya la decisión clínica.
                 </p>
               </div>
+              <div className="mt-3 flex gap-3 rounded-xl border border-[var(--risk-high-line)] bg-[var(--risk-high-soft)] p-4">
+                <span className="mt-0.5 flex h-7 w-7 flex-none items-center justify-center rounded-full text-sm font-bold" style={{ background: "var(--risk-high)", color: "white" }}>!</span>
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: "var(--risk-high)" }}>Chequeo universal de ingreso activo</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[var(--ink)]">
+                    Además del patrón personal, los nuevos análisis verifican signos vitales universalmente preocupantes. Si el paciente llega ya alterado y el patrón se confirma, la cola lo prioriza aunque todavía no tenga historial.
+                  </p>
+                  <p className="mt-2 text-xs text-[var(--muted)]">Las señales históricas de esta vista se generaron antes de activar este chequeo; se verán casos marcados al regenerar los datos.</p>
+                </div>
+              </div>
             </header>
 
             <div className="px-6 md:px-8 py-6">

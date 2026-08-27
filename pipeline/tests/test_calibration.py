@@ -27,3 +27,9 @@ def test_all_test_scenarios_correct(results):
     test = results[results["split"] == "test"]
     wrong = test[~test["correct"]]
     assert wrong.empty, f"Escenarios test (held-out) fallidos: {wrong['name'].tolist()}"
+
+
+def test_arrival_with_persistently_severe_values_is_not_hidden_by_cold_start(results):
+    row = results[results["name"] == "G_ingresa_gravemente_alterado"].iloc[0]
+    assert row["triggered"], "la baranda universal debe proteger el arranque en frío"
+    assert row["peak_risk"] >= 0.80

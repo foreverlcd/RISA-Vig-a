@@ -29,6 +29,7 @@ export interface FusionTerm {
   context_damped_evidence: number;
   weight: number;
   term: number;
+  universal_safety_points?: number;
 }
 
 export interface HistoryPoint {
@@ -51,6 +52,9 @@ export interface Signal {
   evidence_end: string;
   explanation: string;
   model_version: string;
+  personal_risk_score?: number;
+  universal_safety_score?: number;
+  universal_safety_flags?: string;
   evidence: EvidenceRow[];
   baseline: BaselineRow[];
   fusion_terms: FusionTerm[];

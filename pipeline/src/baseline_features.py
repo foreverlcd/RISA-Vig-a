@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 from . import config
+from .safety_guardrails import news2_scale_1_points, safety_family
 
 MAD_SCALE = 1.4826  # factor estándar para que MAD aproxime a sigma bajo normalidad
 ACTIVATION_THRESHOLD = 0.3  # evidencia mínima para contar un punto como "anómalo" en persistencia
@@ -95,6 +96,12 @@ def _context_active_fraction(window_start, window_end, ctx_patient: pd.DataFrame
 
 def build_windowed_features(fusable_with_baseline: pd.DataFrame, ctx_override: pd.DataFrame | None = None) -> pd.DataFrame:
     df = fusable_with_baseline.copy()
+    # Capa independiente de la línea base: conserva la posibilidad de detectar
+    # un paciente que ya llega muy alterado antes de acumular historia propia.
+    df["universal_safety_family"] = df["variable_code"].map(safety_family)
+    df["universal_safety_points"] = [
+        news2_scale_1_points(code, value) for code, value in zip(df["variable_code"], df["value"])
+    ]
     # Las ventanas se indexan por available_datetime, NO por event_datetime: una
     # decisión tomada al cierre de una ventana solo puede usar lo que ya estaba
     # disponible en ese instante (labs y wearables llegan con retraso respecto a
@@ -112,6 +119,8 @@ def build_windowed_features(fusable_with_baseline: pd.DataFrame, ctx_override: p
         last_value=("value", "last"),
         analysis_role=("analysis_role", "first"),
         domain=("domain", "first"),
+        universal_safety_family=("universal_safety_family", "first"),
+        universal_safety_points=("universal_safety_points", "max"),
     ).reset_index()
 
     agg["persistence"] = agg["n_anomalous"] / agg["n_points"]
@@ -159,6 +168,7 @@ if __name__ == "__main__":
         "patient_id", "record_id", "source_file", "variable_code", "domain",
         "event_datetime", "available_datetime", "value", "quality_state",
         "baseline_median", "baseline_mad", "z", "evidence",
+        "universal_safety_family", "universal_safety_points",
     ]
     with_baseline[raw_evidence_cols].to_parquet(config.CACHE_DIR / "raw_evidence.parquet", index=False)
     print("guardado en", config.CACHE_DIR / "windowed_features.parquet", "y raw_evidence.parquet")

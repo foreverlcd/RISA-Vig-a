@@ -27,6 +27,10 @@ def build_evidence_rows(episode: Episode, signal_id: str, raw_evidence: pd.DataF
                          canonical_events: pd.DataFrame, patient_context: pd.DataFrame,
                          var_roles: pd.DataFrame) -> list[dict]:
     rows: list[dict] = []
+    raw_evidence = raw_evidence.copy()
+    if "universal_safety_points" not in raw_evidence:
+        # Compatibilidad para cache generado antes de introducir la baranda.
+        raw_evidence["universal_safety_points"] = 0
     start, end = episode.evidence_start, episode.evidence_end
     top_var = episode.peak_window["top_variable"]
 
@@ -37,10 +41,13 @@ def build_evidence_rows(episode: Episode, signal_id: str, raw_evidence: pd.DataF
         (raw_evidence["patient_id"] == episode.patient_id)
         & (raw_evidence["available_datetime"] >= start)
         & (raw_evidence["available_datetime"] <= end)
-        & (raw_evidence["evidence"] > 0)
+        # Una señal puede originarse por la baranda de seguridad antes de que
+        # exista una línea base personal; en ese caso conserva igualmente las
+        # lecturas que activaron el guardrail como evidencia trazable.
+        & ((raw_evidence["evidence"] > 0) | (raw_evidence["universal_safety_points"] > 0))
     ].merge(var_roles, on="variable_code", how="left")
     window["weight"] = window["analysis_role"].map(ROLE_WEIGHT).fillna(0.5)
-    window["contribution"] = window["weight"] * window["evidence"]
+    window["contribution"] = window[["evidence", "universal_safety_points"]].max(axis=1) * window["weight"]
 
     primary = window[window["variable_code"] == top_var].sort_values("contribution", ascending=False)
     primary = primary.head(MAX_PRIMARY_ROWS)

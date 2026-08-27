@@ -82,7 +82,9 @@ export default function AiExplanation({ signal }: { signal: Signal }) {
       <p className="text-[15px] leading-relaxed" style={{ color: "var(--brand-ink)" }}>
         {state.text}
       </p>
-      <p className="text-[11px] text-[var(--muted)] mt-2 font-mono">✨ generado por IA · {state.model}</p>
+      <p className="text-[11px] text-[var(--muted)] mt-2">
+        ✨ Redacción opcional con IA · {state.model}. La IA no calcula ni modifica el nivel de riesgo.
+      </p>
     </div>
   );
 }

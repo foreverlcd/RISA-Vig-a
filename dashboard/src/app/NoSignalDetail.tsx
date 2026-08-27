@@ -27,7 +27,7 @@ export default function NoSignalDetail({ patient, onClose }: { patient: NoSignal
           <p className="text-sm text-[var(--ink)]">
             El sistema no encontró ninguna combinación de señales sostenida fuera de lo normal para{" "}
             <b>{patient.patient_id}</b> durante todo su monitoreo. Esta es su línea base — lo que el sistema
-            considera "normal" para esta persona.
+            considera &quot;normal&quot; para esta persona.
           </p>
 
           {patient.baseline.length > 0 ? (

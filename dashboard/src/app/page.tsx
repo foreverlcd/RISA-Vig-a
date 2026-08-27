@@ -61,20 +61,21 @@ export default function Home() {
 
   const rows = view === "signals" ? filtered : filteredNoSignal;
   const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-  const pageRows = rows.slice(pageNum * PAGE_SIZE, (pageNum + 1) * PAGE_SIZE);
-
-  useEffect(() => setPageNum(0), [priorityFilter, search, view]);
+  const currentPage = Math.min(pageNum, pageCount - 1);
+  const pageRows = rows.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
 
   function selectPriority(p: PriorityLevel) {
     setPage2("queue");
     setView("signals");
     setPriorityFilter((cur) => (cur === p ? "ALL" : p));
+    setPageNum(0);
   }
 
   function selectNoSignalCard() {
     setPage2("queue");
     setView((v) => (v === "no_signal" ? "signals" : "no_signal"));
     setPriorityFilter("ALL");
+    setPageNum(0);
   }
 
   function openFromToast(s: Signal) {
@@ -122,7 +123,7 @@ export default function Home() {
         </nav>
         <div className="mt-auto text-xs text-[var(--muted)] space-y-1 pt-6 border-t border-[var(--line)]">
           <p>{data.stats.total_patients_monitored} pacientes monitoreados</p>
-          <p className="font-mono">modelo {data.stats.model_version}</p>
+          <p className="font-mono">versión {data.stats.model_version}</p>
         </div>
       </aside>
 
@@ -174,19 +175,35 @@ export default function Home() {
                   <p className="text-[11px] opacity-80">Nunca cruzaron el umbral de alerta</p>
                 </button>
               </div>
+              <div className="mt-5 rounded-xl border border-[var(--line)] bg-[var(--background)] p-4">
+                <p className="text-sm font-semibold text-[var(--ink)]">De millones de lecturas a una lista corta para revisar</p>
+                <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+                  El sistema calcula qué es habitual para cada persona a partir de su historial. Solo prioriza una revisión
+                  cuando varios cambios se alejan de ese patrón y se mantienen en el tiempo; así evita alertas por un dato
+                  aislado, ejercicio u otra variación momentánea.
+                </p>
+                <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+                  <p><span className="font-semibold text-[var(--brand)]">1.</span> Observa el patrón personal.</p>
+                  <p><span className="font-semibold text-[var(--brand)]">2.</span> Busca cambios sostenidos y combinados.</p>
+                  <p><span className="font-semibold text-[var(--brand)]">3.</span> Explica por qué revisar primero.</p>
+                </div>
+                <p className="mt-3 text-xs text-[var(--muted)]">
+                  No es un diagnóstico ni un modelo de IA entrenado: es un cálculo estadístico explicable que apoya la decisión clínica.
+                </p>
+              </div>
             </header>
 
             <div className="px-6 md:px-8 py-6">
               <div className="mb-4 flex flex-wrap items-center gap-3">
                 <input
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => { setSearch(e.target.value); setPageNum(0); }}
                   placeholder="Buscar paciente (ej. PAT-0009)…"
                   className="rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-3 py-2 text-sm w-64 text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]"
                 />
                 {(priorityFilter !== "ALL" || view === "no_signal") && (
                   <button
-                    onClick={() => { setPriorityFilter("ALL"); setView("signals"); }}
+                    onClick={() => { setPriorityFilter("ALL"); setView("signals"); setPageNum(0); }}
                     className="text-xs text-[var(--muted)] hover:text-[var(--ink)] underline underline-offset-2"
                   >
                     Quitar filtro
@@ -244,17 +261,17 @@ export default function Home() {
               </div>
 
               <div className="mt-4 flex items-center justify-between text-sm text-[var(--muted)]">
-                <span>Página {pageNum + 1} de {pageCount}</span>
+                <span>Página {currentPage + 1} de {pageCount}</span>
                 <div className="flex gap-2">
                   <button
-                    disabled={pageNum === 0}
+                    disabled={currentPage === 0}
                     onClick={() => setPageNum((p) => Math.max(0, p - 1))}
                     className="rounded-lg border border-[var(--line-strong)] px-3 py-1.5 disabled:opacity-40"
                   >
                     Anterior
                   </button>
                   <button
-                    disabled={pageNum >= pageCount - 1}
+                    disabled={currentPage >= pageCount - 1}
                     onClick={() => setPageNum((p) => Math.min(pageCount - 1, p + 1))}
                     className="rounded-lg border border-[var(--line-strong)] px-3 py-1.5 disabled:opacity-40"
                   >

@@ -16,7 +16,13 @@ interface NarrateRequest {
   factors: FactorInput[];
 }
 
-const MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+const DEFAULT_MODEL = "openai/gpt-4o-mini";
+// OpenRouter model IDs are always "proveedor/modelo" -- si la variable de
+// entorno no tiene esa forma (p.ej. quedó mal configurada en el panel de
+// Vercel con el nombre de la variable en vez de su valor), se ignora en
+// lugar de mandarla tal cual y romper todas las llamadas.
+const envModel = process.env.OPENROUTER_MODEL;
+const MODEL = envModel && envModel.includes("/") ? envModel : DEFAULT_MODEL;
 
 function buildPrompt(body: NarrateRequest): string {
   const lines = body.factors.map(

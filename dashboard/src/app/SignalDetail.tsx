@@ -22,8 +22,7 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
   const style = PRIORITY_STYLES[signal.priority_level];
 
   const sumTerms = signal.fusion_terms.reduce((a, t) => a + t.term, 0) || 1;
-  const maxTerm = Math.max(...signal.fusion_terms.map((t) => t.term), 0.001);
-  const factors = signal.fusion_terms.filter((t) => t.term > 0.02);
+  const factors = signal.fusion_terms.filter((t) => t.term > 0.02).sort((a, b) => b.term - a.term);
 
   return (
     <div className="fixed inset-0 z-20 flex justify-end bg-black/30" onClick={onClose}>
@@ -86,7 +85,7 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)] mb-1">Versión redactada</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)] mb-1">Explicación en lenguaje simple</p>
                 <AiExplanation signal={signal} />
               </div>
 
@@ -162,8 +161,11 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
                             {s.name} {s.direction}
                           </p>
                           <p className="text-xs text-[var(--muted)]">{s.timing}</p>
-                          <div className="h-1.5 rounded-full bg-[var(--line)] overflow-hidden mt-2">
-                            <div className="h-full rounded-full" style={{ width: `${(t.term / maxTerm) * 100}%`, background: style.hex }} />
+                          <div className="mt-2 flex items-center gap-2">
+                            <div className="h-1.5 flex-1 rounded-full bg-[var(--line)] overflow-hidden" aria-label={`${pct.toFixed(0)}% del riesgo explicado`}>
+                              <div className="h-full rounded-full" style={{ width: `${pct}%`, background: style.hex }} />
+                            </div>
+                            <span className="flex-none text-xs text-[var(--muted)]">aporte al riesgo</span>
                           </div>
                         </div>
                         <span className="flex-none text-sm font-semibold text-[var(--ink)] tabular-nums">{pct.toFixed(0)}%</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Signal } from "./types";
 import { PRIORITY_STYLES, PRIORITY_LABEL_ES } from "./priority";
 
@@ -18,9 +18,10 @@ export default function LiveDemo({ signals, onOpenSignal }: { signals: Signal[];
   const indexRef = useRef(0);
   const keyRef = useRef(0);
 
-  const ordered = useRef(
-    [...signals].sort((a, b) => a.decision_datetime.localeCompare(b.decision_datetime))
-  ).current;
+  const ordered = useMemo(
+    () => [...signals].sort((a, b) => a.decision_datetime.localeCompare(b.decision_datetime)),
+    [signals]
+  );
 
   useEffect(() => {
     if (!running || ordered.length === 0) return;

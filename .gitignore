@@ -1,0 +1,16 @@
+# Dataset oficial del reto: se distribuye por los organizadores, no se
+# republica en el repo. Ver README.md para cómo obtenerlo.
+Participantes Salud/
+
+# Entornos y artefactos de Python
+pipeline/.venv/
+**/__pycache__/
+**/.pytest_cache/
+*.pyc
+
+# Cache intermedio del pipeline (parquet regenerable, ~100MB+)
+pipeline/cache/
+
+# Secretos / entorno local
+.env
+.env.*

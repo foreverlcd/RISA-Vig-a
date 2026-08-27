@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+:root {
+  /* superficie */
+  --background: #f4f6f6;
+  --surface: #ffffff;
+  --ink: #14181b;
+  --muted: #5b6b68;
+  --line: #dde3e1;
+  --line-strong: #b9c4c1;
+  --gauge-track: #e2e8e6;
+
+  /* marca — teal profundo, distinto del azul genérico de dashboards */
+  --brand: #0f6b5c;
+  --brand-ink: #0a4a40;
+  --brand-soft: #e3f1ee;
+  --accent-fill: #0f6b5c;
+
+  /* riesgo — tonos elegidos a mano, no swatches de Tailwind por defecto */
+  --risk-critical: #b3271e;
+  --risk-critical-soft: #fbebe9;
+  --risk-critical-line: #f0c6c2;
+
+  --risk-high: #a3560a;
+  --risk-high-soft: #faeee0;
+  --risk-high-line: #ecd2ae;
+
+  --risk-moderate: #93720a;
+  --risk-moderate-soft: #f8f1dc;
+  --risk-moderate-line: #e6d494;
+
+  --risk-none: #14764f;
+  --risk-none-soft: #e2f2ea;
+  --risk-none-line: #b8ddc9;
+
+  --risk-low: #55605d;
+  --risk-low-soft: #eef1f0;
+  --risk-low-line: #d3d9d6;
+
+  --caution: #93720a;
+  --caution-soft: #f8f1dc;
+  --caution-line: #e6d494;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #10151a;
+    --surface: #171e24;
+    --ink: #eef2f1;
+    --muted: #93a6a2;
+    --line: #2b3339;
+    --line-strong: #3d4750;
+    --gauge-track: #2b3339;
+
+    --brand: #4bbfa8;
+    --brand-ink: #8adcc9;
+    --brand-soft: #163531;
+    --accent-fill: #4bbfa8;
+
+    --risk-critical: #f2857c;
+    --risk-critical-soft: #3a1c1a;
+    --risk-critical-line: #5c2b27;
+
+    --risk-high: #eeab6f;
+    --risk-high-soft: #392a17;
+    --risk-high-line: #5a4021;
+
+    --risk-moderate: #e2c766;
+    --risk-moderate-soft: #362e12;
+    --risk-moderate-line: #55461a;
+
+    --risk-none: #6bd0a8;
+    --risk-none-soft: #123326;
+    --risk-none-line: #1e4d3a;
+
+    --risk-low: #9aa6a2;
+    --risk-low-soft: #1e2528;
+    --risk-low-line: #333d3f;
+
+    --caution: #e2c766;
+    --caution-soft: #362e12;
+    --caution-line: #55461a;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1, h2, .font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.font-mono, code, table.tabular {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+}
+
+/* --- badges / filas por nivel de riesgo, tokens propios, no swatches Tailwind --- */
+.badge-critical { background: var(--risk-critical-soft); color: var(--risk-critical); border-color: var(--risk-critical-line); }
+.badge-high     { background: var(--risk-high-soft);     color: var(--risk-high);     border-color: var(--risk-high-line); }
+.badge-moderate { background: var(--risk-moderate-soft); color: var(--risk-moderate); border-color: var(--risk-moderate-line); }
+.badge-low      { background: var(--risk-low-soft);      color: var(--risk-low);      border-color: var(--risk-low-line); }
+.badge-none     { background: var(--risk-none-soft);     color: var(--risk-none);     border-color: var(--risk-none-line); }
+
+.row-critical { border-left-color: var(--risk-critical); }
+.row-high     { border-left-color: var(--risk-high); }
+.row-moderate { border-left-color: var(--risk-moderate); }
+.row-low      { border-left-color: var(--risk-low); }
+.row-none     { border-left-color: var(--risk-none); }
+
+.dot-critical { background: var(--risk-critical); }
+.dot-high     { background: var(--risk-high); }
+.dot-moderate { background: var(--risk-moderate); }
+.dot-low      { background: var(--risk-low); }
+.dot-none     { background: var(--risk-none); }

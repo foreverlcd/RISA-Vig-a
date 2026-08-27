@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (el .example SÍ se versiona, es la plantilla sin secretos)
 .env*
+!.env.local.example
 
 # vercel
 .vercel

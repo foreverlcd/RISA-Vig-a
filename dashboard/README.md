@@ -42,6 +42,24 @@ cuidado, no un ingeniero) — lenguaje plano por defecto, jerga técnica
 - **Demo en vivo**: botón que simula señales llegando en tiempo real
   (toasts), útil para el pitch — no es una funcionalidad "real" de
   streaming, es un replay de datos ya calculados a ritmo acelerado.
+- **Redactar con IA** (botón en la pestaña Resumen del detalle): manda la
+  evidencia YA CALCULADA (nunca datos crudos) a un modelo vía OpenRouter
+  para redactarla en prosa natural. Si la respuesta menciona un número que
+  no coincide con ningún dato que se le dio, se descarta automáticamente
+  (ver `src/app/api/narrate/route.ts`, función `isGrounded`). Sin
+  `OPENROUTER_API_KEY` configurada, el botón falla con un mensaje claro y
+  el resto del dashboard sigue funcionando igual — no es una dependencia dura.
+
+### Activar "Redactar con IA"
+
+```bash
+cp .env.local.example .env.local
+# edita .env.local y pon tu clave de https://openrouter.ai/keys
+npm run dev
+```
+
+En Vercel: **Project Settings → Environment Variables** → agrega
+`OPENROUTER_API_KEY` (y opcionalmente `OPENROUTER_MODEL`), luego redeploy.
 
 Verificado en navegador real (Playwright headless, luz y modo oscuro):
 carga de datos, filtros, búsqueda, las 4 pestañas, el toggle técnico y el

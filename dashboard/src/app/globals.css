@@ -129,3 +129,23 @@ h1, h2, .font-display {
 .dot-moderate { background: var(--risk-moderate); }
 .dot-low      { background: var(--risk-low); }
 .dot-none     { background: var(--risk-none); }
+
+/* --- shimmer de "la IA está redactando" (idea de codepen.io/cuneyt-erkol/pen/wBWXeWR,
+   adaptada a los tokens propios en vez de colores fijos) --- */
+.shimmer-text {
+  background: linear-gradient(110deg, var(--muted) 35%, var(--ink) 50%, var(--muted) 65%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2.2s infinite linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-text { animation: none; color: var(--muted); -webkit-text-fill-color: var(--muted); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% center; }
+  100% { background-position: -100% center; }
+}

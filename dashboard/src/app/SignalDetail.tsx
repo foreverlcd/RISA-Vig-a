@@ -7,6 +7,7 @@ import { VARIABLE_LABEL, VARIABLE_UNIT, VariableIcon } from "./variables";
 import { factorSentence } from "./explain";
 import RiskGauge from "./RiskGauge";
 import Sparkline from "./Sparkline";
+import AiExplanation from "./AiExplanation";
 
 function fmt(dt: string) {
   return dt.replace("T", " ").slice(0, 16);
@@ -82,6 +83,9 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
                     "No hay suficientes variables con evidencia relevante para describir un patrón."
                   )}
                 </p>
+                <div className="mt-2">
+                  <AiExplanation signal={signal} />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

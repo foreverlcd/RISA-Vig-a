@@ -15,7 +15,7 @@ METADATA = DATA_ROOT / "05_metadata"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-MODEL_VERSION = "risa-vigia-0.1.0"
+MODEL_VERSION = "risa-vigia-0.2.0-safety-guardrail"
 
 # Fusable physiological/lab variables (the ones the noisy-OR risk fusor consumes).
 # STEPS / ACTIVITY_LEVEL / SLEEP_STATE / SIGNAL_QUALITY_INDEX are modulators, not
@@ -25,3 +25,9 @@ FUSABLE_VARIABLES = {"HR", "RR", "SpO2", "TEMP", "SBP", "DBP", "WEARABLE_HR",
 
 WINDOW_HOURS = 3
 MIN_PERSONAL_OBS_FOR_BASELINE = 20
+
+# Baranda complementaria para el arranque en frío. Es NEWS2 Scale 1 para
+# adultos, con las limitaciones documentadas en safety_guardrails.py. No debe
+# aplicarse a pediatría, embarazo o pacientes con objetivo SpO2 Scale 2 sin una
+# política clínica específica aprobada.
+UNIVERSAL_SAFETY_PROFILE = "NEWS2_ADULT_SCALE_1"

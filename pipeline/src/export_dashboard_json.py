@@ -72,6 +72,7 @@ def build_peak_window_table(episode: Episode, windowed_features: pd.DataFrame) -
             "context_damped_evidence": round(e_i, 3),
             "weight": round(weight, 3),
             "term": round(weight * e_i, 4),
+            "universal_safety_points": int(r.universal_safety_points),
         })
     out.sort(key=lambda x: x["term"], reverse=True)
     return out
@@ -102,6 +103,13 @@ if __name__ == "__main__":
         s["baseline"] = baseline_by_patient.get(pid, [])
         ep = episodes_by_signal.get(sid)
         s["fusion_terms"] = build_peak_window_table(ep, windowed_features) if ep is not None else []
+        # Metadatos de interfaz: no se escriben en signals.csv porque ese CSV
+        # debe conservar exactamente el contrato del kit oficial de entrega.
+        if ep is not None:
+            peak = ep.peak_window
+            s["personal_risk_score"] = round(float(peak.get("personal_risk_score", s["risk_score"])), 4)
+            s["universal_safety_score"] = int(peak.get("universal_safety_score", 0) or 0)
+            s["universal_safety_flags"] = peak.get("universal_safety_flags", "") or ""
 
     patients_history: dict[str, list[dict]] = {}
     for s in signals_records:

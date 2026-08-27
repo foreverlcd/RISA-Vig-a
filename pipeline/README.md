@@ -2,6 +2,22 @@
 
 Implementación del motor descrito en [`propuesta/RISA_VIGIA.md`](../propuesta/RISA_VIGIA.md).
 
+## Baranda universal para pacientes que ingresan ya alterados
+
+La línea base personal sigue siendo el motor principal. Como respaldo para el
+arranque en frío, el pipeline también calcula un puntaje de seguridad con los
+parámetros adultos disponibles de NEWS2 Scale 1 (HR, RR, SpO2, SBP y
+temperatura). Si el puntaje es clínicamente preocupante durante dos ventanas
+consecutivas, impone un piso de prioridad aunque no exista suficiente historia
+personal.
+
+No es un diagnóstico ni una sustitución del protocolo local: este perfil no
+cubre nivel de consciencia, oxígeno suplementario ni SpO2 Scale 2, y no debe
+usarse para pediatría, embarazo o pacientes con objetivos respiratorios
+especiales sin validación clínica. Una sola lectura extrema no abre un episodio
+por sí misma; se conserva para confirmación, evitando tratar un posible
+artefacto como una alerta clínica.
+
 ## Cómo correrlo
 
 ```bash

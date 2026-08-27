@@ -22,7 +22,24 @@ from .baseline_features import compute_personal_baseline, build_windowed_feature
 from .fusion import fuse_windows, attach_confidence
 from .generate_signals import extract_episodes
 
-VAR_CATALOG = pd.read_csv(config.METADATA / "variable_catalog.csv").set_index("variable_code")
+try:
+    VAR_CATALOG = pd.read_csv(config.METADATA / "variable_catalog.csv").set_index("variable_code")
+except FileNotFoundError:
+    # El banco sintético debe poder validar la lógica en CI o en una máquina que
+    # no puede conservar el dataset privado del reto. Sus escenarios solo usan
+    # estas variables, por lo que un catálogo mínimo es suficiente.
+    VAR_CATALOG = pd.DataFrame(
+        [
+            ("HR", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+            ("WEARABLE_HR", "wearables", "CONTEXT_SENSITIVE"),
+            ("RR", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+            ("SpO2", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+            ("TEMP", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+            ("SBP", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+            ("DBP", "vital_signs", "PERSONAL_BASELINE_RELEVANT"),
+        ],
+        columns=["variable_code", "domain", "analysis_role"],
+    ).set_index("variable_code")
 START = pd.Timestamp("2026-01-01 00:00:00")
 
 
@@ -132,6 +149,18 @@ def build_scenarios() -> list[Scenario]:
         rows += _series(pid, var, 220, base, noise, rng=rng)
     scenarios.append(Scenario("E_control_estable", "dev", False, rows,
                                description="Ruido biológico normal, sin ningún evento -> control negativo puro"))
+
+    # Sin historia previa útil: los valores ya son gravemente anómalos desde la
+    # admisión. La línea base por sí sola los tomaría como población de arranque;
+    # la baranda universal debe abrir una señal tras dos ventanas confirmatorias.
+    pid = "PAT-SYN-G"
+    rows = []
+    for step in range(18):  # 6 horas, dos ventanas de 3h
+        t = START + pd.Timedelta(minutes=20 * step)
+        for var, value in {"HR": 136, "RR": 27, "SpO2": 90, "SBP": 86, "TEMP": 39.2}.items():
+            rows.append(_row(pid, var, t, value))
+    scenarios.append(Scenario("G_ingresa_gravemente_alterado", "dev", True, rows,
+                               description="Sin línea base previa; alteraciones graves persistentes activan la baranda universal"))
 
     # --- TEST (no se toca hasta el reporte final) -----------------------
     pid = "PAT-SYN-A2"

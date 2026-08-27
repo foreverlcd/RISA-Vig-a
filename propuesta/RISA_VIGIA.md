@@ -10,7 +10,7 @@ Versión: definitiva para construcción. No se modifica el enfoque, solo se deta
 
 En vez de comparar cada dato contra un rango fijo ("¿está fuera de lo normal?"), el sistema aprende **qué es normal para cada paciente específico**, y solo genera una alerta cuando **varias señales se mueven mal a la vez y se mantienen así**, nunca por un valor aislado.
 
-Esto responde directamente a la restricción central del reto: **prohibido usar umbrales estáticos**. Aquí no existe ningún "si HR > 100 → alerta". Todo pasa primero por normalización personal, y el riesgo emerge de la combinación de evidencia, no de un punto de corte.
+Esto responde directamente a la restricción central del reto: **no usar un umbral estático como motor principal**. No existe un "si HR > 100 → alerta" que reemplace la normalización personal; el riesgo emerge de la combinación de evidencia y su persistencia. Como defensa de arranque en frío, se añade una baranda universal multiparámetro para adultos (perfil NEWS2 Scale 1, pendiente de aprobación clínica local): solo impone un piso de prioridad si los valores clínicamente preocupantes persisten en dos ventanas. No diagnostica ni convierte una lectura aislada en una alerta autónoma.
 
 ---
 

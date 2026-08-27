@@ -2,7 +2,14 @@
 
 MVP para el reto HealthSignal LATAM (RISA): detección temprana de riesgo a partir
 de datos heterogéneos de salud (historia clínica, laboratorio, signos vitales,
-wearables), con priorización calibrada y explicable — sin umbrales estáticos.
+wearables), con priorización calibrada y explicable — sin depender únicamente
+de umbrales estáticos.
+
+Además de la línea base personal, la versión actual incorpora una **baranda de
+seguridad universal** para el caso de arranque en frío: evita que un paciente
+que ya entra muy alterado parezca “normal” solo por no tener historia previa.
+Es un respaldo multiparámetro, no un diagnóstico ni un reemplazo del protocolo
+clínico local; ver `pipeline/README.md` para sus límites de uso.
 
 ## Estructura del repo
 

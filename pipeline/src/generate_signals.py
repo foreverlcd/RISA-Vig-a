@@ -115,6 +115,14 @@ def _explanation(episode: Episode) -> str:
     peak = episode.peak_window
     n_windows = len(episode.windows)
     span_h = (episode.evidence_end - episode.evidence_start).total_seconds() / 3600
+    safety_score = int(peak.get("universal_safety_score", 0) or 0)
+    safety_note = ""
+    if safety_score >= 3:
+        flags = peak.get("universal_safety_flags", "") or "parámetros disponibles"
+        safety_note = (
+            f" Baranda universal {config.UNIVERSAL_SAFETY_PROFILE}: "
+            f"puntaje {safety_score} en {flags}; requiere verificación clínica."
+        )
     return (
         f"Riesgo {priority_from_score(episode.current_risk)} para {episode.patient_id}: "
         f"evidencia sostenida durante {n_windows} ventana(s) ({span_h:.0f}h). "
@@ -122,6 +130,7 @@ def _explanation(episode: Episode) -> str:
         f"(contribución={peak['top_term']:.2f}, concordancia={peak['concordance']:.2f} "
         f"con {peak['n_active_vars']}/{peak['n_available_vars']} variables disponibles). "
         f"risk_score={episode.current_risk:.3f}, confidence_score={episode.current_confidence:.3f}."
+        f"{safety_note}"
     )
 
 

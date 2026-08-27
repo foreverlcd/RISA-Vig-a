@@ -23,6 +23,7 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
 
   const sumTerms = signal.fusion_terms.reduce((a, t) => a + t.term, 0) || 1;
   const factors = signal.fusion_terms.filter((t) => t.term > 0.02).sort((a, b) => b.term - a.term);
+  const safetyScore = signal.universal_safety_score ?? 0;
 
   return (
     <div className="fixed inset-0 z-20 flex justify-end bg-black/30" onClick={onClose}>
@@ -83,6 +84,16 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
                   )}
                 </p>
               </div>
+
+              {safetyScore >= 3 && (
+                <div className="rounded-lg border px-4 py-3" style={{ background: "var(--risk-high-soft)", borderColor: "var(--risk-high-line)" }}>
+                  <p className="text-sm font-semibold" style={{ color: "var(--risk-high)" }}>Baranda de seguridad activada</p>
+                  <p className="mt-1 text-sm text-[var(--ink)]">
+                    Además del patrón personal, los signos disponibles alcanzaron un puntaje de seguridad de {safetyScore}
+                    {signal.universal_safety_flags ? ` (${signal.universal_safety_flags})` : ""}. Esto requiere verificación clínica; no es un diagnóstico.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted)] mb-1">Explicación en lenguaje simple</p>
@@ -147,6 +158,14 @@ export default function SignalDetail({ signal, onClose }: { signal: Signal; onCl
               </p>
 
               <div className="space-y-2">
+                {safetyScore >= 3 && (
+                  <div className="rounded-lg border border-[var(--risk-high-line)] bg-[var(--risk-high-soft)] p-3 text-sm text-[var(--ink)]">
+                    <p className="font-medium" style={{ color: "var(--risk-high)" }}>Chequeo universal de seguridad: {safetyScore} puntos</p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      Se usa como respaldo cuando el paciente puede haber llegado ya alterado. No reemplaza su línea base ni el juicio clínico.
+                    </p>
+                  </div>
+                )}
                 {factors.map((t) => {
                   const s = factorSentence(t, signal.baseline);
                   const pct = (t.term / sumTerms) * 100;
